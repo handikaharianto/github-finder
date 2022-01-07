@@ -1,8 +1,11 @@
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import Navbar from './components/layout/Navbar'
+
 function App() {
   return (
-    <div>
-      <h1>hello world</h1>
-    </div>
+    <BrowserRouter>
+      <Navbar title='GitHub Finder' />
+    </BrowserRouter>
   )
 }
 
