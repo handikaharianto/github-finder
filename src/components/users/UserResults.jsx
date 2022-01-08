@@ -1,31 +1,14 @@
-import axios from 'axios'
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
+import { useGithub } from '../../context/github/GithubContext'
 import Spinner from '../layout/Spinner'
 import UserItem from './UserItem'
 
 function UserResults() {
-  const [users, setUsers] = useState([])
-  const [isLoading, setIsLoading] = useState(true)
+  const { users, isLoading, fetchUsers } = useGithub()
 
   useEffect(() => {
     fetchUsers()
-  }, [])
-
-  const fetchUsers = async () => {
-    const options = {
-      method: 'GET',
-      url: '/users',
-    }
-
-    axios
-      .request(options)
-      .then((response) => {
-        setUsers(response.data)
-      })
-      .catch((error) => console.log(error))
-
-    setIsLoading(false)
-  }
+  }, [fetchUsers])
 
   if (!isLoading) {
     return (

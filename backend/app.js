@@ -11,7 +11,7 @@ app.use(cors())
 app.get('/users', (req, res) => {
   const options = {
     method: 'GET',
-    url: 'https://api.github.com/users',
+    url: `${process.env.REACT_APP_URL}/users`,
     headers: {
       Authorization: `Bearer ${process.env.REACT_APP_TOKEN}`,
     },
