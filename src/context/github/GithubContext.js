@@ -10,12 +10,17 @@ const GithubContext = createContext()
 const GithubProvider = ({ children }) => {
   const initialState = {
     users: [],
-    isLoading: true,
+    isLoading: false,
+    isError: false,
   }
 
   const [state, dispatch] = useReducer(githubReducer, initialState)
 
+  // Get initial users (for testing purpose)
   const fetchUsers = () => {
+    // set isLoading to be true before fetching data
+    dispatch({ type: 'FETCH_INIT' })
+
     const options = {
       method: 'GET',
       url: '/users',
@@ -24,14 +29,22 @@ const GithubProvider = ({ children }) => {
     axios
       .request(options)
       .then((response) => {
-        dispatch({ type: 'GET_USERS', payload: response.data })
+        dispatch({ type: 'FETCH_SUCCESS', payload: response.data })
       })
-      .catch((error) => console.log(error))
+      .catch((error) => {
+        console.log(error)
+        dispatch({ type: 'FETCH_FAILURE' })
+      })
   }
 
   return (
     <GithubContext.Provider
-      value={{ users: state.users, isLoading: state.isLoading, fetchUsers }}
+      value={{
+        users: state.users,
+        isLoading: state.isLoading,
+        isError: state.isError,
+        fetchUsers,
+      }}
     >
       {children}
     </GithubContext.Provider>

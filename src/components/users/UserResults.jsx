@@ -1,16 +1,12 @@
-import { useEffect } from 'react'
 import { useGithub } from '../../context/github/GithubContext'
+import Message from '../layout/Message'
 import Spinner from '../layout/Spinner'
 import UserItem from './UserItem'
 
 function UserResults() {
-  const { users, isLoading, fetchUsers } = useGithub()
+  const { users, isLoading, isError } = useGithub()
 
-  useEffect(() => {
-    fetchUsers()
-  }, [fetchUsers])
-
-  if (!isLoading) {
+  if (!isLoading && !isError) {
     return (
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
         {users.map((user) => (
@@ -18,6 +14,8 @@ function UserResults() {
         ))}
       </div>
     )
+  } else if (isError) {
+    return <Message msg='Oops! Failed to fetch data!' />
   } else {
     return <Spinner />
   }
