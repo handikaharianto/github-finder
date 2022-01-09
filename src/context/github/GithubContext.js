@@ -1,5 +1,6 @@
-import { useState, useContext, createContext } from 'react'
+import { useReducer, useContext, createContext } from 'react'
 import axios from 'axios'
+import githubReducer from './GithubReducer'
 
 const GithubContext = createContext()
 
@@ -7,10 +8,14 @@ const GithubContext = createContext()
 // const GITHUB_TOKEN = process.env.REACT_APP_TOKEN
 
 const GithubProvider = ({ children }) => {
-  const [users, setUsers] = useState([])
-  const [isLoading, setIsLoading] = useState(true)
+  const initialState = {
+    users: [],
+    isLoading: true,
+  }
 
-  const fetchUsers = async () => {
+  const [state, dispatch] = useReducer(githubReducer, initialState)
+
+  const fetchUsers = () => {
     const options = {
       method: 'GET',
       url: '/users',
@@ -19,15 +24,15 @@ const GithubProvider = ({ children }) => {
     axios
       .request(options)
       .then((response) => {
-        setUsers(response.data)
+        dispatch({ type: 'GET_USERS', payload: response.data })
       })
       .catch((error) => console.log(error))
-
-    setIsLoading(false)
   }
 
   return (
-    <GithubContext.Provider value={{ users, isLoading, fetchUsers }}>
+    <GithubContext.Provider
+      value={{ users: state.users, isLoading: state.isLoading, fetchUsers }}
+    >
       {children}
     </GithubContext.Provider>
   )
