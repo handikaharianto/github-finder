@@ -1,8 +1,10 @@
 import { useState } from 'react'
+import { useAlert } from '../../context/alert/AlertContext'
 import { useGithub } from '../../context/github/GithubContext'
 
 function UserSearch() {
   const { users, searchUsers, clearUsers } = useGithub()
+  const { setAlert } = useAlert()
   const [text, setText] = useState('')
 
   const handleChange = (e) => {
@@ -13,7 +15,7 @@ function UserSearch() {
     e.preventDefault()
 
     if (text === '') {
-      alert('Please enter something')
+      setAlert('Please enter something!', 'error')
     } else {
       // search users based on input field
       searchUsers(text)
