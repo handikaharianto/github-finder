@@ -16,20 +16,24 @@ const GithubProvider = ({ children }) => {
 
   const [state, dispatch] = useReducer(githubReducer, initialState)
 
-  // Get initial users (for testing purpose)
-  const fetchUsers = () => {
+  const searchUsers = (text) => {
     // set isLoading to be true before fetching data
     dispatch({ type: 'FETCH_INIT' })
 
+    const params = new URLSearchParams({
+      q: text,
+    })
+
     const options = {
       method: 'GET',
-      url: '/users',
+      url: `${process.env.REACT_APP_URL}/search/users?${params}`,
     }
 
     axios
       .request(options)
       .then((response) => {
-        dispatch({ type: 'FETCH_SUCCESS', payload: response.data })
+        const { items } = response.data // get users
+        dispatch({ type: 'FETCH_SUCCESS', payload: items })
       })
       .catch((error) => {
         console.log(error)
@@ -37,13 +41,16 @@ const GithubProvider = ({ children }) => {
       })
   }
 
+  const clearUsers = () => {
+    dispatch({ type: 'CLEAR_USERS' })
+  }
+
   return (
     <GithubContext.Provider
       value={{
-        users: state.users,
-        isLoading: state.isLoading,
-        isError: state.isError,
-        fetchUsers,
+        ...state,
+        searchUsers,
+        clearUsers,
       }}
     >
       {children}
