@@ -10,6 +10,7 @@ const GithubContext = createContext()
 const GithubProvider = ({ children }) => {
   const initialState = {
     users: [],
+    user: {},
     isLoading: false,
     isError: false,
   }
@@ -27,13 +28,44 @@ const GithubProvider = ({ children }) => {
     const options = {
       method: 'GET',
       url: `${process.env.REACT_APP_URL}/search/users?${params}`,
+      headers: {
+        Authorization: `Bearer ${process.env.REACT_APP_TOKEN}`,
+      },
     }
 
     axios
       .request(options)
       .then((response) => {
         const { items } = response.data // get users
-        dispatch({ type: 'FETCH_SUCCESS', payload: items })
+        dispatch({ type: 'FETCH_USERS', payload: items })
+      })
+      .catch((error) => {
+        console.log(error)
+        dispatch({ type: 'FETCH_FAILURE' })
+      })
+  }
+
+  const getUser = (login) => {
+    // set isLoading to be true before fetching data
+    dispatch({ type: 'FETCH_INIT' })
+
+    const options = {
+      method: 'GET',
+      url: `${process.env.REACT_APP_URL}/users/${login}`,
+      headers: {
+        Authorization: `Bearer ${process.env.REACT_APP_TOKEN}`,
+      },
+    }
+
+    axios
+      .request(options)
+      .then((response) => {
+        if (response.status === 404) {
+          window.location = '/notfound'
+        } else {
+          const data = response.data // data of single user
+          dispatch({ type: 'FETCH_USER', payload: data })
+        }
       })
       .catch((error) => {
         console.log(error)
@@ -51,6 +83,7 @@ const GithubProvider = ({ children }) => {
         ...state,
         searchUsers,
         clearUsers,
+        getUser,
       }}
     >
       {children}

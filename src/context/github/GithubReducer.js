@@ -2,10 +2,17 @@ const githubReducer = (state, action) => {
   switch (action.type) {
     case 'FETCH_INIT':
       return { ...state, isLoading: true, isError: false }
-    case 'FETCH_SUCCESS':
+    case 'FETCH_USERS':
       return {
         ...state,
         users: action.payload,
+        isLoading: false,
+        isError: false,
+      }
+    case 'FETCH_USER':
+      return {
+        ...state,
+        user: action.payload,
         isLoading: false,
         isError: false,
       }
