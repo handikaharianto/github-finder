@@ -24,19 +24,19 @@ function ReposItem({
         </h3>
         {description && <p>{description}</p>}
         <div className='mt-3'>
-          <div className='badge badge-info text-lg '>
+          <div className='mr-4 badge badge-info text-lg'>
             <FaEye className='mr-2' />
             {watchers_count}
           </div>
-          <div className='badge badge-success text-lg'>
+          <div className='mr-4 badge badge-success text-lg'>
             <FaStar className='mr-2' />
             {stargazers_count}
           </div>
-          <div className='badge badge-error text-lg'>
+          <div className='mr-4 badge badge-error text-lg'>
             <FaInfo className='mr-2' />
             {open_issues}
           </div>
-          <div className='badge badge-warning text-lg'>
+          <div className='mr-4 badge badge-warning text-lg'>
             <FaUtensils className='mr-2' />
             {forks}
           </div>
