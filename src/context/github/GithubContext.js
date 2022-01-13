@@ -11,6 +11,7 @@ const GithubProvider = ({ children }) => {
   const initialState = {
     users: [],
     user: {},
+    repos: [],
     isLoading: false,
     isError: false,
   }
@@ -73,6 +74,41 @@ const GithubProvider = ({ children }) => {
       })
   }
 
+  // get user repos
+  const getRepos = (login) => {
+    // set isLoading to be true before fetching data
+    dispatch({ type: 'FETCH_INIT' })
+
+    // get 10 latest repositories based on creation
+    const params = new URLSearchParams({
+      sort: 'created',
+      per_page: 10,
+    })
+
+    const options = {
+      method: 'GET',
+      url: `${process.env.REACT_APP_URL}/users/${login}/repos?${params}`,
+      headers: {
+        Authorization: `Bearer ${process.env.REACT_APP_TOKEN}`,
+      },
+    }
+
+    axios
+      .request(options)
+      .then((response) => {
+        if (response.status === 404) {
+          window.location = '/notfound'
+        } else {
+          const data = response.data // data of user's repos
+          dispatch({ type: 'FETCH_REPOS', payload: data })
+        }
+      })
+      .catch((error) => {
+        console.log(error)
+        dispatch({ type: 'FETCH_FAILURE' })
+      })
+  }
+
   const clearUsers = () => {
     dispatch({ type: 'CLEAR_USERS' })
   }
@@ -84,6 +120,7 @@ const GithubProvider = ({ children }) => {
         searchUsers,
         clearUsers,
         getUser,
+        getRepos,
       }}
     >
       {children}
