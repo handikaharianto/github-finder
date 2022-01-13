@@ -4,15 +4,26 @@ import { useParams, Link, Navigate } from 'react-router-dom'
 import { useGithub } from '../context/github/GithubContext'
 import Spinner from '../components/layout/Spinner'
 import ReposList from '../components/repos/ReposList'
+import { getUsersAndRepos } from '../context/github/GithubActions'
 
 function User() {
-  const { user, repos, isLoading, isError, getUser, getRepos } = useGithub()
+  const { user, repos, isLoading, isError, dispatch } = useGithub()
   const { login: username } = useParams()
 
   useEffect(() => {
-    getUser(username)
-    getRepos(username)
-  }, [])
+    dispatch({ type: 'FETCH_INIT' })
+
+    const getUserData = async () => {
+      try {
+        const userData = await getUsersAndRepos(username)
+        dispatch({ type: 'FETCH_USER_AND_REPOS', payload: userData })
+      } catch (error) {
+        dispatch({ type: 'FETCH_FAILURE' })
+      }
+    }
+
+    getUserData()
+  }, [dispatch, username])
 
   const {
     name,

@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { useAlert } from '../../context/alert/AlertContext'
 import { useGithub } from '../../context/github/GithubContext'
+import { searchUsers } from '../../context/github/GithubActions'
 
 function UserSearch() {
-  const { users, searchUsers, clearUsers } = useGithub()
+  const { users, dispatch } = useGithub()
   const { setAlert } = useAlert()
   const [text, setText] = useState('')
 
@@ -17,8 +18,12 @@ function UserSearch() {
     if (text === '') {
       setAlert('Please enter something!', 'error')
     } else {
+      dispatch({ type: 'FETCH_INIT' })
+
       // search users based on input field
       searchUsers(text)
+        .then(({ items }) => dispatch({ type: 'FETCH_USERS', payload: items }))
+        .catch((type) => dispatch({ type }))
 
       setText('')
     }
@@ -48,7 +53,7 @@ function UserSearch() {
           <button
             type='button'
             className='btn btn-ghost btn-lg'
-            onClick={clearUsers}
+            onClick={() => dispatch({ type: 'CLEAR_USERS' })}
           >
             CLEAR
           </button>
